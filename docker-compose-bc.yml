@@ -1,0 +1,113 @@
+# docker-compose -f docker-compose-bc.yml up -d
+version: '3'
+
+services:
+  sc-bc-01:
+    image: nhdocker/sc-bc:latest
+    container_name: "sc-bc-01"
+    # deploy:
+    #   replicas: 3
+    #   update_config:
+    #     parallelism: 2
+    #     delay: 10s
+    build:
+      context: ./
+      dockerfile: Dockerfile
+      args:
+        APP: "bc"
+    restart: always
+    volumes:
+      - /home/dev/bc:/var/www/bc
+      - /home/dev/bc/uwsgi01.ini:/var/www/uwsgi.ini:ro
+      - /home/dev/bc/logs:/var/log/uwsgi
+    networks:
+      - bc
+
+  sc-bc-02:
+    image: nhdocker/sc-bc:latest
+    container_name: "sc-bc-02"
+    # deploy:
+    #   replicas: 3
+    #   update_config:
+    #     parallelism: 2
+    #     delay: 10s
+    build:
+      context: ./
+      dockerfile: Dockerfile
+      args:
+        APP: "bc"
+    restart: always
+    volumes:
+      # - .//bc:/var/www/bc
+      # - ./logs/bc:/var/log/uwsgi
+      - /home/dev/bc:/var/www/bc
+      - /home/dev/bc/uwsgi02.ini:/var/www/uwsgi.ini:ro
+      - /home/dev/bc/logs:/var/log/uwsgi
+    networks:
+      - bc
+
+  sc-bc-03:
+    image: nhdocker/sc-bc:latest
+    container_name: "sc-bc-03"
+    # deploy:
+    #   replicas: 3
+    #   update_config:
+    #     parallelism: 2
+    #     delay: 10s
+    build:
+      context: ./
+      dockerfile: Dockerfile
+      args:
+        APP: "bc"
+    restart: always
+    volumes:
+      - /home/dev/bc:/var/www/bc
+      - /home/dev/bc/uwsgi03.ini:/var/www/uwsgi.ini:ro
+      - /home/dev/bc/logs:/var/log/uwsgi
+    networks:
+      - bc
+
+  sc-bc-04:
+    image: nhdocker/sc-bc:latest
+    container_name: "sc-bc-04"
+    # deploy:
+    #   replicas: 3
+    #   update_config:
+    #     parallelism: 2
+    #     delay: 10s
+    build:
+      context: ./
+      dockerfile: Dockerfile
+      args:
+        APP: "bc"
+    restart: always
+    volumes:
+      - /home/dev/bc:/var/www/bc
+      - /home/dev/bc/uwsgi04.ini:/var/www/uwsgi.ini:ro
+      - /home/dev/bc/logs:/var/log/uwsgi
+    networks:
+      - bc
+
+  sc-n-bc:
+    image: nhdocker/sc-n-bc:latest
+    container_name: "sc-n-bc"
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    restart: always
+    depends_on:
+      - sc-bc-01
+      - sc-bc-02
+    volumes:
+      - /home/dev/nginx/bc/nginx.conf:/etc/nginx/nginx.conf
+      - /home/dev/nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - /home/dev/nginx/bc/logs:/root/logs
+    ports:
+      # - 80:80
+      - 443:443
+    networks:
+      - bc
+
+networks:
+  bc:
+    driver: overlay
