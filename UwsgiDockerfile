@@ -19,7 +19,7 @@ WORKDIR /var/www
 # 依存Pythonライブラリ一覧コピー
 #COPY ./uwsgi_tls.ini ./uwsgi.ini
 # COPY ./uwsgi.ini ./uwsgi.ini
-COPY ./$APP/requirements.txt ./
+COPY ./requirements.txt ./
 
 # 依存Pythonライブラリインストール
 RUN pip install --upgrade pip
