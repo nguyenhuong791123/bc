@@ -1,0 +1,40 @@
+# ベースイメージ
+FROM python:3.6
+MAINTAINER NGUYEN VAN HUONG<nguyenhuong791123@gmail.com>
+
+ARG APP
+#ARG PORT
+# RUN apt-get update
+# RUN apt-get install -y logrotate
+
+# HOME DIR
+RUN mkdir /var/www
+# 証明書 DIR
+RUN mkdir /var/www/tls
+COPY ./tls/cert.pem /var/www/tls/cert.pem
+COPY ./tls/crt.pem /var/www/tls/crt.pem
+COPY ./tls/key.pem /var/www/tls/key.pem
+
+WORKDIR /var/www
+# 依存Pythonライブラリ一覧コピー
+#COPY ./uwsgi_tls.ini ./uwsgi.ini
+# COPY ./uwsgi.ini ./uwsgi.ini
+COPY ./$APP/requirements.txt ./
+
+# 依存Pythonライブラリインストール
+RUN pip install --upgrade pip
+RUN pip install --no-cache-dir -r requirements.txt
+
+# workdirの指定
+ENV UWSGI_PORT=$PORT
+ENV UWSGI_APP=$APP
+ENV UWSGI_HOMEPATH=/var/www/$APP
+RUN mkdir $UWSGI_HOMEPATH
+
+RUN mkdir /var/log/uwsgi
+# COPY ./logrotate/logrotate.conf /etc/
+# COPY ./logrotate/uwsgi.conf /etc/logrotate.d/
+
+EXPOSE 5000
+
+CMD [ "uwsgi", "--ini", "/var/www/uwsgi.ini" ]

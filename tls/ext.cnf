@@ -1,0 +1,6 @@
+[alt_names]
+email = nguyenhuong791123@gmail.com
+[ SAN ]
+subjectAltName = @alt_names
+[alt_names]
+DNS = vmui01
